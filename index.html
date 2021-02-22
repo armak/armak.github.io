@@ -12,48 +12,56 @@
 </body>
 <script>
 (function(){
-    var canvas = document.getElementById('canvas'),
-    context = canvas.getContext('2d');
+	let canvas = document.getElementById('canvas');
+	let context = canvas.getContext('2d');
 
-    window.addEventListener('resize', resizeCanvas, false);
+	draw(context);
+	
+	function draw(c){
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+		let w = canvas.width;
+		let h = canvas.height;
+		let ar = w/h;
 
-    function resizeCanvas(){
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            drawStuff(context); 
-    }
+		c.rect(0, 0, w, h);
+		c.fillStyle = `rgba(245, 245, 245, 1.0)`;
+		c.fill();
 
-	resizeCanvas();
-    
-    function drawStuff(c){
-    	let w = canvas.width;
-    	let h = canvas.height;
-    	let ar = w/h;
+		let textSize = canvas.width*0.14;
+		let size = textSize;
+		let sizes = [];
+		let color = 0.3;
+		let colors = [];
+		let v = 0.5+0.5*Math.sin(1.8*Date.now()/1000);
 
-    	let textSize = canvas.width*0.14;
-    	let size = textSize;
-    	let sizes = [];
-    	let color = 0.58;
-    	let colors = [];
-    	while(color > 1/256){
-    		sizes.push(size);
-    		colors.push(color);
-    		size /= 0.995;
-    		color *= 0.9;
-    	}
-    	sizes.reverse();
-    	colors.reverse();
-    	c.textAlign = "center";
-    	sizes.forEach(function(element, i){
-    		const size = element;
-    		c.font = (size)+"px Arial";
-    		c.fillStyle = `rgba(0, 0, 0, ${colors[i]*colors[i]})`;
-    		c.fillText("anti CryptoArt", w/2, h/2+textSize/4);
-    	});
-    	c.font = (size*0.1)+"px Arial";
+		while(color > 1/8){
+			sizes.push(size);
+			colors.push(color);
+			size *= (1-v)*0.998 + v*1.002
+			color *= 0.98;
+		}
+		sizes.reverse();
+		colors.reverse();
+		c.textAlign = "center";
+		sizes.forEach(function(element, i){
+			const size = element;
+			c.font = (size)+"px Arial";
+			c.fillStyle = `rgba(0, 0, 0, ${colors[i]*colors[i]})`;
+			c.fillText("Anti CryptoArt", w/2, h/2+textSize/4);
+		});
+		c.font = (textSize*0.1)+"px Arial";
 		c.fillStyle = `rgba(0, 0, 0, ${0.8})`;
-		c.fillText("under construction", w/2, h/2+textSize*0.9);
-    }
+		c.fillText("under construction", w/2, h/2+textSize*0.8);
+
+
+		c.fillText("under construction", w/2, h/2+textSize*0.8);
+
+		window.requestAnimationFrame(function(){
+			draw(c);
+		});
+	}
+
 })();
 </script>
 </html>
