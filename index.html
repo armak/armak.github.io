@@ -156,7 +156,7 @@ void main(){
     c = .5+.5*texelFetch(Frame, ivec2(gl_FragCoord.xy),0);
     c.rgb = color_saturate(c.rgb, 0.0);
     c.rgb = mix(vec3(0.25), c.rgb, smoothstep(1.0, 3.0, Time));
-    float n = hash(uvec3(gl_FragCoord.xy, 60.0*Time)).x;
+    float n = min(1.0, length(hash(uvec3(gl_FragCoord.xy, 60.0*Time))));
     c.rgb = pow(smoothstep(0.2, 1.0, c.rgb)*vec3(0.95+0.1*n), vec3(1.0/2.2));
     c.a = 1.0;
 }`
