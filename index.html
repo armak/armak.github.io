@@ -15,31 +15,27 @@
 		canvas {display: block; z-index: -1;}
 		#wrapper{
 			position:absolute;
-			top: 50%;
+			/* Bias vertical position slightly towards the top to account for the height of the texts. */
+			top: 45%;
 			left: 0;
 			width: 100%;
 		}
 		.text {
-			position: block;
-			top: 0;
-			width: 100%;
 			color: #eeeeee;
 			user-select: none;
-			transform: translateY(-5.5vw);
 			animation: fadein 3s;
 		}
 		#title {
 			text-align: center;
-			font-size: min(7vw, 7em);
+			font-size: min(10vw, 7.5vh);
 			font-family: 'Montserrat';
 			text-shadow: 0px 0px 1.5px #eeeeee;
 		}
 		#disclaimer {
-			font-size: min(1.4vw, 1.5em);
+			font-size: min(1.75vw, 1.4vh);
 			font-family: 'MontserratLight';
 			text-shadow: 0px 0px 1px #eeeeee;
 			margin-left:50%;
-			margin-top:-5.5%;
 			width:12em;
 			/* Bias centering slightly to not account for the ellipsis. */
 			transform: translateX(-48%);
