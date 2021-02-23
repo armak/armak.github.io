@@ -150,7 +150,7 @@ void main(){
     c.rgb = color_saturate(c.rgb, 0.0);
     c.rgb = mix(vec3(0.55), c.rgb, smoothstep(1.0, 3.0, Time));
     c.rgb = pow(smoothstep(0.2, 1.0, c.rgb), vec3(1.0/2.2));
-    c.rgb *= 0.97+0.06*hash(vec3(gl_FragCoord.xy, Time));;
+    c.rgb *= 0.98+0.04*hash(vec3(gl_FragCoord.xy, Time));;
     c.a = 1.0;
 }`
 
