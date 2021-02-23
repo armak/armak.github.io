@@ -188,6 +188,11 @@ void main(){
 		w = canvas.width;
 		h = canvas.height;
 
+		gl.deleteFramebuffer(fb0);
+		gl.deleteFramebuffer(fb1);
+		gl.deleteTexture(targetTexture0);
+		gl.deleteTexture(targetTexture1);
+
 		const targetTextureWidth = w;
 		const targetTextureHeight = h;
 		targetTexture0 = gl.createTexture();
