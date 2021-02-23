@@ -23,7 +23,6 @@
 		.text {
 			color: #eeeeee;
 			user-select: none;
-			animation: fadein 3s;
 		}
 		#title {
 			text-align: center;
@@ -38,52 +37,56 @@
 			margin-left:50%;
 			width:12em;
 			/* Bias centering slightly to not account for the ellipsis. */
-			transform: translateX(-48%);
+			transform: translateX(-40%);
+			animation: fadein 4s;
 		}
 		@keyframes fadein {
-			from {opacity: 0;}
-			to   {opacity: 1;}
+			0%   {opacity: 0;}
+			50%  {opacity: 0;}
+			100% {opacity: 1;}
 		}
 	</style>
 </head>
 <body>
 		<canvas id="canvas"></canvas>
 		<div id="wrapper">
-			<h1 class="text" id="title">Anti Cryptoart</h1>
+			<h1 class="text" id="title"> </h1>
 			<h2 class="text" id="disclaimer">under construction</h1>
 		</div>
 </body>
 
 <script>
 (function(){
-
 	let frame = 0;
 	setInterval(function(){
-		let element = document.getElementById("disclaimer");
-		switch(frame){
-			case(0):
-				element.textContent = "under construction";
-				break;
+		let disclaimer = document.getElementById("disclaimer");
+		let disclaimerText = "under construction";
+		disclaimer.textContent = disclaimerText;
+		//disclaimer.textContent = disclaimerText.substring(0, Math.min(frame, disclaimerText.length));
+	
+		switch(frame % 6){
 			case(1):
-				element.textContent = "under construction.";
+				disclaimer.textContent += ".";
 				break;
 			case(2):
-				element.textContent = "under construction..";
+				disclaimer.textContent += "..";
 				break;
 			case(3):
-				element.textContent = "under construction...";
-				break;
-			case(4):
-				element.textContent = "under construction";
-				break;
-			case(5):
-				element.textContent = "under construction";
+				disclaimer.textContent += "...";
 				break;
 			default:
 				break;
 		}
-		frame = (frame+1) % 6;
+		frame += 1;
 	}, 200);
+
+	let char = 0;
+	setInterval(function(){
+		let title = document.getElementById("title");
+		let name = "Anti Cryptoart";
+		title.textContent = name.substring(0, Math.min(char, name.length));
+		char += 1;
+	}, 100);
 
 	let canvas = document.getElementById("canvas");
 	let gl = canvas.getContext("webgl2");
@@ -123,14 +126,10 @@ out vec4 c;
 void main(){
 	vec2 u = gl_FragCoord.xy;
 	c=u.yyyx/1e4;
-	if(Time < 1.0){
-		for(float t=1.5; t<50.; t+=t)
-		c += c.gbar/mix(1.2, 3.9, smoothstep(0.0, 1.0, Time))-c*.3+T(u-c.wz*t);
-	} else {
-		for(float t=1.5; t<400.; t+=t)
-			c += c.gbar/3.9-c*.3+T(u-c.wz*t);
-	}
-	c = mix(T(.5*R+.5*((-R+2.*u)*0.9984)), cos(c), mix(0.45, 0.034, sqrt(smoothstep(0.0, 1.0, Time))));
+	float s = mix(4.0, 3.6, smoothstep(1280., 5120., max(R.x, R.y)));
+	for(float t=1.5; t<400.; t+=t)
+		c += c.gbar/s-c*.3+T(u-c.wz*t);
+	c = mix(T(.5*R+.5*((-R+2.*u)*0.999)), cos(c), 0.035);
 }`;
 
 	let output = `#version 300 es
@@ -151,9 +150,9 @@ vec3 color_saturate(vec3 color, float a){
 void main(){
     c = .5+.5*texelFetch(Frame, ivec2(gl_FragCoord.xy),0);
     c.rgb = color_saturate(c.rgb, 0.0);
-    c.rgb = mix(vec3(0.25), c.rgb, smoothstep(1.0, 3.0, Time));
-    float n = min(1.0, length(hash(uvec3(gl_FragCoord.xy, 60.0*Time))));
-    c.rgb = pow(smoothstep(0.2, 1.0, c.rgb)*vec3(0.95+0.1*n), vec3(1.0/2.2));
+    c.rgb = mix(vec3(0.55), c.rgb, smoothstep(1.0, 3.0, Time));
+    //float n = min(1.0, length(hash(uvec3(gl_FragCoord.xy, 60.0*Time))));
+    c.rgb = pow(smoothstep(0.2, 1.0, c.rgb), vec3(1.0/2.2));
     c.a = 1.0;
 }`
 
