@@ -61,7 +61,6 @@
 			<h2 class="text" id="disclaimer">under construction</h1>
 		</div>
 </body>
-
 <script>
 (function(){
 	let frame = 0;
@@ -69,8 +68,6 @@
 		let disclaimer = document.getElementById("disclaimer");
 		let disclaimerText = "under construction";
 		disclaimer.textContent = disclaimerText;
-		//disclaimer.textContent = disclaimerText.substring(0, Math.min(frame, disclaimerText.length));
-	
 		switch(frame % 6){
 			case(1):
 				disclaimer.textContent += ".";
@@ -100,18 +97,6 @@
 	console.log(gl.getExtension('EXT_color_buffer_float'));
 	console.log(gl.getExtension('OES_texture_float_linear'));
 	
-	function createShader(gl, sourceCode, type){
-		let shader = gl.createShader(type);
-		gl.shaderSource(shader, sourceCode);
-		gl.compileShader(shader);
-		gl.attachShader
-		if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
-			let info = gl.getShaderInfoLog( shader );
-			throw 'Could not compile WebGL program. \n\n' + info;
-		}
-		return shader;
-	}
-
 	let vertex = `#version 300 es
 in vec2 coords;
 void main(){
@@ -162,33 +147,44 @@ void main(){
     c.rgb*=.98+.04*hash(vec3(gl_FragCoord.xy,Time));;
     c.a=1.;
 }`
+	
+	let v  = createShader(vertex, gl.VERTEX_SHADER);
+	let f  = createShader(fragment, gl.FRAGMENT_SHADER);
+	let f2 = createShader(output, gl.FRAGMENT_SHADER);
+
+	function createShader(sourceCode, type){
+		let shader = gl.createShader(type);
+		gl.shaderSource(shader, sourceCode);
+		gl.compileShader(shader);
+		gl.attachShader
+		if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
+			let info = gl.getShaderInfoLog( shader );
+			throw 'Could not compile WebGL program. \n\n' + info;
+		}
+		return shader;
+	}
 
 	let pid = gl.createProgram();
-	let f = createShader(gl, fragment, gl.FRAGMENT_SHADER);
-	let v = createShader(gl, vertex, gl.VERTEX_SHADER);
 	gl.attachShader(pid, f);
 	gl.attachShader(pid, v);
 	gl.linkProgram(pid);
 
 	let pid2 = gl.createProgram();
-	let f2 = createShader(gl, output, gl.FRAGMENT_SHADER);
-	let v2 = createShader(gl, vertex, gl.VERTEX_SHADER);
 	gl.attachShader(pid2, f2);
-	gl.attachShader(pid2, v2);
+	gl.attachShader(pid2, v);
 	gl.linkProgram(pid2);
 
-	let array = new Float32Array([-1,  3, -1, -1, 3, -1]);
-	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-	gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
-	let al = gl.getAttribLocation(pid, "coords");
-	gl.vertexAttribPointer(al, 2, gl.FLOAT, false, 0, 0);
-	gl.enableVertexAttribArray(al);
+	let fullscreenTriangle = new Float32Array([-1,  3, -1, -1, 3, -1]);
+	createFullscreenVertexBuffer(pid);
+	createFullscreenVertexBuffer(pid2);
 
-	gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-	gl.bufferData(gl.ARRAY_BUFFER, array, gl.STATIC_DRAW);
-	let al2 = gl.getAttribLocation(pid2, "coords");
-	gl.vertexAttribPointer(al2, 2, gl.FLOAT, false, 0, 0);
-	gl.enableVertexAttribArray(al2);
+	function createFullscreenVertexBuffer(program){
+		gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+		gl.bufferData(gl.ARRAY_BUFFER, fullscreenTriangle, gl.STATIC_DRAW);
+		let al = gl.getAttribLocation(program, "coords");
+		gl.vertexAttribPointer(al, 2, gl.FLOAT, false, 0, 0);
+		gl.enableVertexAttribArray(al);	
+	}
 
 	let w, h, fb0, fb1, targetTexture0, targetTexture1;
 	let previousWidth;
