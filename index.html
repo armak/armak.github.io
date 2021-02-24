@@ -134,7 +134,7 @@ void main(){
 	float A=.1*Time;
 	for(float t=1.5;t<400.;t+=t)
 		c+=c.gbar/s-c*.3+T(u-c.wz*t);
-	c=mix(T(.5*R+.5*((-R+2.*u)*0.999)),cos(c*mix(1.,1.2,sin(0.01*Time))),.034);
+	c=mix(T(.5*R+.5*((-R+2.*u)*(1.-.0014*smoothstep(1.,2.,Time)))),cos(c*mix(1.,1.2,cos(0.01*Time))/smoothstep(0.,1.,Time)),.034);
 	if(any(isnan(c)))
 		c=vec4(0);
 }`;
