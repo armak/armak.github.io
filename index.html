@@ -134,7 +134,6 @@ void main(){
 	vec2 u=gl_FragCoord.xy;
 	c=u.yyyx/1e4;
 	float s=mix(4.,3.7,smoothstep(1280.,5120.,max(R.x,R.y)));
-	float A=.1*Time;
 	for(float t=1.5;t<400.;t+=t)
 		c+=c.gbar/s-c*.3+T(u-c.wz*t);
 	c=mix(T(.5*R+.5*((-R+2.*u)*(1.-.0014*smoothstep(1.,2.,Time)))),cos(c*mix(1.,1.2,.5+.5*sin(.02*Time))/smoothstep(0.,1.,Time)),.034);
