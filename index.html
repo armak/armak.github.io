@@ -174,7 +174,7 @@ void main(){
 	gl.attachShader(pid2, v);
 	gl.linkProgram(pid2);
 
-	let fullscreenTriangle = new Float32Array([-1,  3, -1, -1, 3, -1]);
+	let fullscreenTriangle = new Float32Array([-1, 3, -1, -1, 3, -1]);
 	createFullscreenVertexBuffer(pid);
 	createFullscreenVertexBuffer(pid2);
 
@@ -187,8 +187,8 @@ void main(){
 	}
 
 	let w, h, fb0, fb1, targetTexture0, targetTexture1;
-	let previousWidth;
-	let previousHeight;
+	let previousWidth, previousHeight;
+	let framebuffers = [], textures = [];
 
 	createTextures();
 
@@ -241,6 +241,9 @@ void main(){
 
 		[targetTexture0, fb0] = initializeFramebuffer(targetTexture0, fb0);
 		[targetTexture1, fb1] = initializeFramebuffer(targetTexture1, fb1);
+		framebuffers = [fb0, fb1];
+		textures     = [targetTexture1, targetTexture0];
+
 		previousWidth = w;
 		previousHeight = h;
 	}
@@ -254,43 +257,23 @@ void main(){
 
 	function draw(time) {
 		gl.viewport(0, 0, w, h);
-		gl.clearColor(0, 0, 0, 0);
-		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+
 		time /= 1000;
 		
 		gl.useProgram(pid);
 		gl.uniform2f(resolutionLocation, w, h);
 		gl.uniform1f(timeLocation, time);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffers[source]);
+		gl.bindTexture(gl.TEXTURE_2D, textures[source]);
+		gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-		switch(source)
-		{
-			case 0:
-				gl.bindFramebuffer(gl.FRAMEBUFFER, fb0);
-				gl.bindTexture(gl.TEXTURE_2D, targetTexture1);
-				gl.drawArrays(gl.TRIANGLES, 0, 3);
-				source = 1;
+		source = (source + 1) % 2;
 
-				gl.useProgram(pid2);
-				gl.uniform1f(timeLocation2, time);
-				gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-				gl.bindTexture(gl.TEXTURE_2D, targetTexture0);
-				gl.drawArrays(gl.TRIANGLES, 0, 3);
-				break;
-			case 1:
-				gl.bindFramebuffer(gl.FRAMEBUFFER, fb1);
-				gl.bindTexture(gl.TEXTURE_2D, targetTexture0);
-				gl.drawArrays(gl.TRIANGLES, 0, 3);
-				source = 0;
-
-				gl.useProgram(pid2);
-				gl.uniform1f(timeLocation2, time);
-				gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-				gl.bindTexture(gl.TEXTURE_2D, targetTexture1);
-				gl.drawArrays(gl.TRIANGLES, 0, 3);
-				break;
-			default:
-				break;
-		}
+		gl.useProgram(pid2);
+		gl.uniform1f(timeLocation2, time);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		gl.bindTexture(gl.TEXTURE_2D, textures[source]);
+		gl.drawArrays(gl.TRIANGLES, 0, 3);
 
 		window.requestAnimationFrame(draw);
 	}
