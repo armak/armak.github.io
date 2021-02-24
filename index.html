@@ -27,6 +27,9 @@
 		.text {
 			color: #eeeeee;
 			user-select: none;
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 			/* Use to mask subpixel font rendering */
 			/*text-shadow: 0px 0px 1px #eeeeee;*/
 		}
@@ -39,9 +42,9 @@
 			font-size: min(1.75vw, 1.4vh);
 			font-family: 'MontserratLight';
 			margin-left:50%;
-			width:12em;
+			width:12.5em;
 			/* Bias centering slightly to not account for the ellipsis. */
-			transform: translateX(-40%);
+			transform: translateX(-36%);
 			animation: fadein 3s;
 		}
 		@keyframes fadein {
@@ -225,7 +228,9 @@ void main(){
 				gl.bindFramebuffer(gl.FRAMEBUFFER, oldFB);
 				if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE){
 					gl.readBuffer(gl.COLOR_ATTACHMENT0);
-					gl.copyTexSubImage2D(gl.TEXTURE_2D, level, 0, 0, 0, 0, Math.min(previousWidth, w), Math.min(previousHeight, h));
+					let wm = Math.min(previousWidth, w);
+					let hm = Math.min(previousHeight, h);
+					gl.copyTexSubImage2D(gl.TEXTURE_2D, level, Math.max(0, (w-wm)/2), Math.max(0, (h-hm)/2), 0, 0, wm, hm);
 				}
 			}
 
