@@ -125,7 +125,7 @@ precision highp float;
 uniform vec2 R;
 uniform float Time;
 uniform sampler2D PreviousFrame;
-#define T(x) texture(PreviousFrame, fract((x)/R.xy))
+#define T(x) texture(PreviousFrame,fract((x)/R.xy))
 out vec4 c;
 void main(){
 	vec2 u=gl_FragCoord.xy;
@@ -134,7 +134,7 @@ void main(){
 	float A=.1*Time;
 	for(float t=1.5;t<400.;t+=t)
 		c+=c.gbar/s-c*.3+T(u-c.wz*t);
-	c=mix(T(.5*R+.5*((-R+2.*u)*(1.-.0014*smoothstep(1.,2.,Time)))),cos(c*mix(1.,1.2,cos(0.01*Time))/smoothstep(0.,1.,Time)),.034);
+	c=mix(T(.5*R+.5*((-R+2.*u)*(1.-.0014*smoothstep(1.,2.,Time)))),cos(c*mix(1.,1.2,.5+.5*sin(.02*Time))/smoothstep(0.,1.,Time)),.034);
 	if(any(isnan(c)))
 		c=vec4(0);
 }`;
