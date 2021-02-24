@@ -156,10 +156,8 @@ void main(){
 		let shader = gl.createShader(type);
 		gl.shaderSource(shader, sourceCode);
 		gl.compileShader(shader);
-		gl.attachShader
 		if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS)){
-			let info = gl.getShaderInfoLog( shader );
-			throw 'Could not compile WebGL program. \n\n' + info;
+			throw 'Could not compile WebGL program. \n\n' + gl.getShaderInfoLog(shader);
 		}
 		return shader;
 	}
